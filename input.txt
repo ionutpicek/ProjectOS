@@ -1,0 +1,6 @@
+/home/user/documents
+/var/log
+/etc
+/usr/bin
+/tmp
+/home/user/Pictures
