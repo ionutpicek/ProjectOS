@@ -4,37 +4,33 @@
 //Directory Monitoring:
 //The user can specify the directory to be monitored as an argument in the command line, and the program will track changes occurring in it and its subdirectories, 
 //parsing recursively each entry from the directory.
-//With each run of the program, the snapshot of the directory will be updated, storing the metadata of each entry. 
+//With each run of the program, the snapshot of the directory will be updated, storing the metadata of each entry.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdint.h>
-#include <time.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <dirent.h>
 
-int main(int argc, char *argv[]){
-
-    if(argc != 2){
-        printf("Illegal number of arguments");
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s directory\n", argv[0]);
+        exit(EXIT_FAILURE);
     }
 
     struct dirent *str;
-
     DIR *director = opendir(argv[1]);
+    if (director == NULL) {
+        perror("opendir");
+        exit(EXIT_FAILURE);
+    }
 
-    while((str = readdir(director)) != NULL){
-        printf("%s\n",str -> d_name);
+    char path[1024];
 
-        char path[50];
-        
-        sprintf(argv[1],"/%s",str -> d_name);
-        
-        printf("Path %s",path);
-        printf("Director - \n");
+    while ((str = readdir(director)) != NULL) {
+        if (strcmp(str->d_name, ".") == 0 || strcmp(str->d_name, "..") == 0)
+            continue; // Skip current and parent directory entries
+
+        snprintf(path, sizeof(path), "%s/%s", argv[1], str->d_name);
+        printf("Path: %s\n", path);
     }
 
     closedir(director);
